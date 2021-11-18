@@ -20,9 +20,7 @@ function Todo({ todos, completeTodo, removeTodo, updateTodo, hideRegister }) {
 
   useEffect(() => {
     setListFinished(todos);
-    if (todos.length != listFinished.length) {
-      setIsFinished(false);
-    }
+    setIsFinished(false);
   }, [todos]);
 
   const submitUpdate = (value) => {
@@ -34,7 +32,7 @@ function Todo({ todos, completeTodo, removeTodo, updateTodo, hideRegister }) {
     });
   };
 
-  const editTodo = (todo) => {
+  const showEditTodo = (todo) => {
     hideRegister();
     setEdit({
       id: todo.id,
@@ -44,8 +42,11 @@ function Todo({ todos, completeTodo, removeTodo, updateTodo, hideRegister }) {
   };
 
   const handleSelectAll = () => {
-    setIsCheckAll(!isCheckAll);
-    setIsCheck(listFinished.map((todo) => todo.id.toString()));
+    const isSelected = todos.filter((todo) => todo.isComplete !== true);
+    if (isSelected.length > 0 && !isFinished) {
+      setIsCheckAll(!isCheckAll);
+      setIsCheck(listFinished.map((todo) => todo.id.toString()));
+    }
   };
 
   const handleUnSelectAll = () => {
@@ -61,10 +62,10 @@ function Todo({ todos, completeTodo, removeTodo, updateTodo, hideRegister }) {
   };
 
   const handleFinishAll = () => {
-    isCheck.map((id) => {
+    isCheck.forEach((id) => {
       completeTodo(parseInt(id));
-      setIsCheck([]);
     });
+    setIsCheck([]);
   };
 
   const dateCheckbox = (data) => {
@@ -99,7 +100,7 @@ function Todo({ todos, completeTodo, removeTodo, updateTodo, hideRegister }) {
             className='m-2'
             icon='pi pi-pencil'
             label='Editar'
-            onClick={() => editTodo(data)}
+            onClick={() => showEditTodo(data)}
           />
         ) : null}
         <Button
@@ -159,11 +160,11 @@ function Todo({ todos, completeTodo, removeTodo, updateTodo, hideRegister }) {
   };
 
   const handleFilterIsFinished = () => {
+    setIsCheck([]);
     setIsFinished(!isFinished);
     if (!isFinished) {
-      return setListFinished(
-        listFinished.filter((item) => item.isComplete == true)
-      );
+      setListFinished(listFinished.filter((item) => item.isComplete === true));
+      return;
     }
     setListFinished(todos);
   };

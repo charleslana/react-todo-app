@@ -11,27 +11,63 @@ function TodoList() {
 
   const addTodo = (todo) => {
     todo.text = todo.text.trim();
+    const existTodo = todos.some(
+      (item) => item.text.toLowerCase() === todo.text.toLowerCase().trim()
+    );
+
     if (!todo.text) {
+      return;
+    }
+
+    if (existTodo) {
+      toast.current.show({
+        severity: 'error',
+        detail: 'Já existe uma tarefa com a mesma descrição.',
+      });
       return;
     }
 
     const newsTodos = [todo, ...todos];
 
     setTodos(newsTodos);
+
+    toast.current.show({
+      severity: 'success',
+      detail: 'Tarefa adicionada com sucesso.',
+    });
   };
 
   const updateTodo = (todoId, newValue) => {
+    setHidden(false);
+
     if (!newValue) {
       return;
     }
 
-    setHidden(false);
+    const existTodo = todos.some(
+      (item) =>
+        item.text.toLowerCase() === newValue.toLowerCase().trim() &&
+        item.id !== todoId
+    );
+
+    if (existTodo) {
+      toast.current.show({
+        severity: 'error',
+        detail: 'Já existe uma tarefa com a mesma descrição.',
+      });
+      return;
+    }
 
     setTodos((prevState) =>
       prevState.map((item) =>
         item.id === todoId ? { ...item, text: newValue } : item
       )
     );
+
+    toast.current.show({
+      severity: 'success',
+      detail: 'Tarefa atualizada com sucesso.',
+    });
   };
 
   const removeTodo = (id) => {
@@ -41,7 +77,6 @@ function TodoList() {
 
     toast.current.show({
       severity: 'success',
-      summary: 'Tarefa',
       detail: 'Tarefa excluída com sucesso.',
     });
   };
@@ -55,6 +90,11 @@ function TodoList() {
     });
 
     setTodos(updatedTodos);
+
+    toast.current.show({
+      severity: 'success',
+      detail: 'Tarefa(s) finalizada(s) com sucesso.',
+    });
   };
 
   const hideRegister = () => {

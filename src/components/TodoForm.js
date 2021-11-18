@@ -26,7 +26,9 @@ function TodoForm(props) {
       text: input,
       isComplete: false,
     });
+
     setInput('');
+
     if (input.trim() !== '') {
       setCount(count + 1);
     }
